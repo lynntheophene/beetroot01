@@ -1,0 +1,68 @@
+import React from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+
+interface UPIPaymentProps {
+  amount: number;
+  upiId: string;
+  description: string;
+  merchantName?: string; // Optional merchant name
+  onSuccess: () => void;
+  onCancel: () => void;
+}
+
+export function UPIPayment({ 
+  amount, 
+  upiId="maryantony1961.in@okicici", 
+  description="neha", 
+  merchantName = "Neha s Eluvathingal", 
+  onSuccess, 
+  onCancel 
+}: UPIPaymentProps) {
+  // Create the UPI payment URL according to UPI standard format
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(description)}`;
+  
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+      <h3 className="text-xl font-semibold mb-4 text-center">Pay with UPI</h3>
+      
+      <div className="flex justify-center mb-4">
+        <QRCodeSVG 
+          value={upiUrl} 
+          size={200} 
+          level="H" // High error correction level for better scan reliability
+          includeMargin={true}
+        />
+      </div>
+      
+      <div className="text-center mb-4">
+        <p className="text-gray-600">Scan with any UPI app to pay</p>
+        <p className="font-semibold text-lg">₹{amount}</p>
+      </div>
+      
+      <div className="text-center mb-6">
+        <p className="text-sm text-gray-500">UPI ID: {"maryantony1961.in@okicici"}</p>
+      </div>
+      
+      <div className="space-y-2">
+        <a
+          href={upiUrl}
+          className="block w-full bg-blue-600 text-white text-center py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          onClick={() => {
+            setTimeout(() => {
+              // In a real app, we would verify the payment status
+              onSuccess();
+            }, 2000);
+          }}
+        >
+          Pay Now
+        </a>
+        <button
+          onClick={onCancel}
+          className="block w-full border border-gray-300 text-gray-700 text-center py-2 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
